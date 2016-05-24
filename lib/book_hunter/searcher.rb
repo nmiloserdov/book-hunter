@@ -8,7 +8,8 @@ module BookHunter
     end
 
     def find_book
-      book = "Чак Паланик, Бойцовский Клуб"
+      byebug
+      "Чак паланик"
     end
 
     private

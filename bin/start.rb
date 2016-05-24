@@ -1,11 +1,15 @@
 #!/usr/bin/env ruby
 
+require "rubygems"
+require "bundler/setup"
 require 'telegram/bot'
+require 'telegram/bot'
+require 'book_hunter'
+require 'pg'
 require 'byebug'
 
-require_relative "../lib/book_hunter/messages.rb"
-require_relative "../lib/book_hunter/searcher.rb"
-require_relative "../lib/book_hunter/categories.rb"
-require_relative "../lib/book_hunter.rb"
-
+BookHunter.db_connect
 BookHunter.start
+
+
+

@@ -1,10 +1,18 @@
 require 'yaml'
 
+require 'active_record'
+require "book_hunter/messages.rb"
+require "book_hunter/searcher.rb"
+require "book_hunter/categories.rb"
+
+lib_path = File.dirname File.absolute_path(__FILE__)
+Dir[lib_path + "/book_hunter/models/*.rb"].each { |file| require file  }
+
 module BookHunter
 
   @root ||= File.expand_path File.dirname __dir__
   @secrets = YAML.load_file([@root,'config','secrets.yml'].join("/"))
-  TOKEN = @secrets.values.first
+  TOKEN = @secrets.dig("token")
 
   COMMANDS = { 
     start:      "/start",
@@ -22,31 +30,35 @@ module BookHunter
         case message.text
         when COMMANDS[:start]
           bot.api.sendMessage(chat_id: message.chat.id,
-                              text: @messages[:greet, message.from.first_name], 
-                              parse_mode: :markdown)
+            text: @messages[:greet, message.from.first_name], 
+              parse_mode: :markdown)
         when COMMANDS[:categories]
           # TODO
           category_message = @category.to_message
           bot.api.sendMessage(chat_id: message.chat.id,
-                              text: @messages[:categories, category_message])
+            text: @messages[:categories, category_message])
         when /#{COMMANDS[:find]}/
           searcher = Searcher.new(message.text)
           # TODO active record
           book = searcher.find_book
           bot.api.sendMessage(chat_id: message.chat.id,
-                              text: @messages[:book, book])
+            text: @messages[:book, book])
         when COMMANDS[:contacts]
           bot.api.sendMessage(chat_id: message.chat.id,
-                              text: @messages[:contacts], parse_mode: :markdown)
+            text: @messages[:contacts], parse_mode: :markdown)
         when COMMANDS[:help]
           bot.api.sendMessage(chat_id: message.chat.id,
-                              text: @messages[:help], parse_mode: :markdown)
+            text: @messages[:help], parse_mode: :markdown)
         else
           bot.api.sendMessage(chat_id: message.chat.id,
-                              text: @messages[:error] + @messages[:help],
-                              parse_mode: :markdown)
+            text: @messages[:error] + @messages[:help],
+              parse_mode: :markdown)
         end
       end
     end
+  end
+  def self.db_connect
+    db_config = YAML.load_file([@root,'db','database.yml'].join("/"))
+    ActiveRecord::Base.establish_connection db_config.dig("production")
   end
 end
