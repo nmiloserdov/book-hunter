@@ -33,16 +33,21 @@ module BookHunter
             text: @messages[:greet, message.from.first_name], 
               parse_mode: :markdown)
         when COMMANDS[:categories]
-          # TODO
           category_message = @category.to_message
           bot.api.sendMessage(chat_id: message.chat.id,
             text: @messages[:categories, category_message])
         when /#{COMMANDS[:find]}/
-          searcher = Searcher.new(message.text)
-          # TODO active record
+          searcher = Searcher.new(message.text, COMMANDS)
           book = searcher.find_book
-          bot.api.sendMessage(chat_id: message.chat.id,
-            text: @messages[:book, book])
+          if book
+            bot.api.sendMessage(chat_id: message.chat.id,
+              text: @messages[:book, book.title])
+          else
+            send_message = @messages[:not_found_with, searcher.category]
+            send_message = @messages[:not_found] if send_message.nil?
+            bot.api.sendMessage(chat_id: message.chat.id,
+              text: send_message)
+          end
         when COMMANDS[:contacts]
           bot.api.sendMessage(chat_id: message.chat.id,
             text: @messages[:contacts], parse_mode: :markdown)

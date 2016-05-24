@@ -9,8 +9,9 @@ module BookHunter
 
     def to_message
       message = ""
-      @categories.each do |name|
-        message += "  #{name} \n"
+      @categories = Category.all
+      @categories.each do |category|
+        message += "#{category.id}) #{category.name}\n"
       end
       message
     end
