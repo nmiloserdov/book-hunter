@@ -1,11 +1,5 @@
 module BookHunter
-  class Category
-
-
-    private
-
-    def extract_category
-
-    end
+  class Category < ActiveRecord::Base
+    has_and_belongs_to_many :books
   end
 end
