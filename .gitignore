@@ -1,2 +1,2 @@
-config/secrets.yml
-db/database.yml
+/config/secrets.yml
+/db/database.yml
