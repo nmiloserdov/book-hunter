@@ -3,7 +3,6 @@
 require "rubygems"
 require "bundler/setup"
 require 'telegram/bot'
-require 'telegram/bot'
 require 'book_hunter'
 require 'pg'
 require 'byebug'

@@ -28,40 +28,36 @@ module BookHunter
       @category = Categories.new
       bot.listen do |message|
         case message.text
+        when message
         when COMMANDS[:start]
-          bot.api.sendMessage(chat_id: message.chat.id,
-            text: @messages[:greet, message.from.first_name], 
-              parse_mode: :markdown)
+          send_message(bot, message, @messages[:greet, message])
         when COMMANDS[:categories]
-          category_message = @category.to_message
-          bot.api.sendMessage(chat_id: message.chat.id,
-            text: @messages[:categories, category_message])
+          send_message(bot, message, @messages[:categories])
         when /#{COMMANDS[:find]}/
-          searcher = Searcher.new(message.text, COMMANDS)
-          book = searcher.find_book
-          if book
-            bot.api.sendMessage(chat_id: message.chat.id,
-              text: @messages[:book, book.title])
-          else
-            send_message = @messages[:not_found_with, searcher.category]
-            send_message = @messages[:not_found] if send_message.nil?
-            bot.api.sendMessage(chat_id: message.chat.id,
-              text: send_message)
-          end
+          send_message(bot, message, @messages[:book, message.text])
+          user = User.find_by(telegram_id: message.from.id)
+          user.increase_handling if user
         when COMMANDS[:contacts]
-          bot.api.sendMessage(chat_id: message.chat.id,
-            text: @messages[:contacts], parse_mode: :markdown)
+          send_message(bot, message, @messages[:contacts])
         when COMMANDS[:help]
-          bot.api.sendMessage(chat_id: message.chat.id,
-            text: @messages[:help], parse_mode: :markdown)
+          send_message(bot, message, @messages[:help])
         else
-          bot.api.sendMessage(chat_id: message.chat.id,
-            text: @messages[:error] + @messages[:help],
-              parse_mode: :markdown)
+          send_message(bot, message, @messages[:error])
         end
       end
     end
   end
+
+  def self.send_message(bot, message, client_message)
+    bot.api.sendMessage(chat_id: message.chat.id,
+      text: client_message, 
+        parse_mode: :markdown)
+  end
+
+  def self.root
+    @root ||= File.expand_path File.dirname __dir__
+  end
+
   def self.db_connect
     db_config = YAML.load_file([@root,'db','database.yml'].join("/"))
     ActiveRecord::Base.establish_connection db_config.dig("production")

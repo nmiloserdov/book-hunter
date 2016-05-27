@@ -35,4 +35,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency "pg"
   spec.add_dependency "pry"
   spec.add_dependency "colorize"
+  spec.add_dependency "mechanize"
 end

@@ -11,20 +11,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 5) do
+ActiveRecord::Schema.define(version: 7) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "ar_internal_metadata", primary_key: "key", force: :cascade do |t|
-    t.string   "value"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "books", force: :cascade do |t|
     t.string "author"
     t.string "title"
+    t.string "origin_name"
   end
 
   create_table "books_categories", force: :cascade do |t|
@@ -32,7 +27,17 @@ ActiveRecord::Schema.define(version: 5) do
     t.integer "category_id"
   end
 
+  create_table "books_countries", force: :cascade do |t|
+    t.integer "book_id"
+    t.integer "country_id"
+  end
+
   create_table "categories", force: :cascade do |t|
+    t.string  "name"
+    t.integer "rang"
+  end
+
+  create_table "countries", force: :cascade do |t|
     t.string "name"
   end
 
@@ -47,6 +52,9 @@ ActiveRecord::Schema.define(version: 5) do
     t.string  "first_name"
     t.string  "last_name"
     t.string  "nickname"
+    t.string  "origin_name"
+    t.string  "country"
+    t.integer "handling_count"
   end
 
 end

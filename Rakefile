@@ -52,7 +52,8 @@ def invoke(task_name, *args)
 end
 # Require custom tasks
 
-require_relative 'lib/book_hunter.rb'
+require "book_hunter"
+include BookHunter
 rake_path = File.expand_path("../lib/tasks/**/*.rake", __FILE__)
 Dir.glob(rake_path).each do |task_file|
   load task_file
